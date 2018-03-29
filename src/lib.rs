@@ -4,6 +4,8 @@
 // Copyright (c) 2018 Guillaume Gomez
 //
 
+#![no_std]
+
 //! The point of this (small) crate is to allow you to add doc comments from macros.
 //!
 //! It's especially useful when generating types with macros. For example:

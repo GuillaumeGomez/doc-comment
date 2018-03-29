@@ -4,7 +4,9 @@
 // Copyright (c) 2018 Guillaume Gomez
 //
 
-#![no_std]
+#![cfg_attr(feature = "no_core", feature(no_core))]
+#![cfg_attr(feature = "no_core", no_core)]
+#![cfg_attr(not(feature = "no_core"), no_std)]
 
 //! The point of this (small) crate is to allow you to add doc comments from macros.
 //!

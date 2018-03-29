@@ -1,6 +1,6 @@
 [package]
 name = "doc-comment"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Guillaume Gomez <guillaume1.gomez@gmail.com>"]
 
 documentation = "http://docs.rs/crate/doc-comment"
@@ -13,3 +13,6 @@ name = "doc_comment"
 
 [badges]
 travis-ci = { repository = "GuillaumeGomez/doc-comment" }
+
+[features]
+no_core = []

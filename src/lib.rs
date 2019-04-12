@@ -8,7 +8,8 @@
 #![cfg_attr(feature = "no_core", no_core)]
 #![cfg_attr(not(feature = "no_core"), no_std)]
 
-//! The point of this (small) crate is to allow you to add doc comments from macros.
+//! The point of this (small) crate is to allow you to add doc comments from macros or
+//! to test external markdown files' code blocks through `rustdoc`.
 //!
 //! It's especially useful when generating types with macros. For example:
 //!
@@ -91,13 +92,28 @@
 //!
 //! Now each struct has doc which match itself!
 //!
-//! It's also possible to generate doc comments without passing a type as follows:
+//! Now let's assume you want to test code examples in your `README.md` file which
+//! looks like this:
+//!
+//! ````text
+//! # A crate
+//!
+//! Here is a code example:
+//!
+//! ```rust
+//! let x = 2;
+//! assert!(x != 0);
+//! ```
+//! ````
+//!
+//! You can use the `doc_comment!` macro to test it like this:
 //!
 //! ```
 //! #[macro_use]
 //! extern crate doc_comment;
 //!
-//! doc_comment!("foooooo");
+//! // When running `cargo test`, rustdoc will check this file as well.
+//! doc_comment!(include_str!("../README.md"));
 //! # fn main() {}
 //! ```
 

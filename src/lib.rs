@@ -90,9 +90,23 @@
 //!     # fn main() {}
 //!
 //! Now each struct has doc which match itself!
+//!
+//! It's also possible to generate doc comments without passing a type as follows:
+//!
+//! ```
+//! #[macro_use]
+//! extern crate doc_comment;
+//!
+//! doc_comment!("foooooo");
+//! # fn main() {}
+//! ```
 
 #[macro_export]
 macro_rules! doc_comment {
+    ($x:expr) => {
+        #[doc = $x]
+        extern {}
+    };
     ($x:expr, $($tt:tt)*) => {
         #[doc = $x]
         $($tt)*

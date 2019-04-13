@@ -116,7 +116,35 @@
 //! doc_comment!(include_str!("../README.md"));
 //! # fn main() {}
 //! ```
+//!
+//! Please note that can also use the `doctest!` macro to have a shorter way to test an outer
+//! file:
+//!
+//! ```
+//! #[macro_use]
+//! extern crate doc_comment;
+//!
+//! doctest!("../README.md");
+//! # fn main() {}
+//! ```
 
+/// This macro can be used to generate documentation upon a type/item (or just to test outer
+/// markdown file code examples).
+///
+/// # Example
+///
+/// ```
+/// #[macro_use]
+/// extern crate doc_comment;
+///
+/// // If you just want to test an outer markdown file:
+/// doc_comment!(include_str!("../README.md"));
+///
+/// // If you want to document an item:
+/// doc_comment!("fooo", pub struct Foo {});
+///
+/// # fn main() {}
+/// ```
 #[macro_export]
 macro_rules! doc_comment {
     ($x:expr) => {
@@ -126,5 +154,25 @@ macro_rules! doc_comment {
     ($x:expr, $($tt:tt)*) => {
         #[doc = $x]
         $($tt)*
+    };
+}
+
+/// This macro provdes a simpler way to test an outer markdown file.
+///
+/// # Example
+///
+/// ```
+/// #[macro_use]
+/// extern crate doc_comment;
+///
+/// // The two next lines are doing exactly the same thing:
+/// doc_comment!(include_str!("../README.md"));
+/// doctest!("../README.md");
+/// # fn main() {}
+/// ```
+#[macro_export]
+macro_rules! doctest {
+    ($x:expr) => {
+        doc_comment!(include_str!($x));
     };
 }

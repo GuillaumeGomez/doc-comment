@@ -157,7 +157,7 @@ macro_rules! doc_comment {
     };
 }
 
-/// This macro provdes a simpler way to test an outer markdown file.
+/// This macro provides a simpler way to test an outer markdown file.
 ///
 /// # Example
 ///
@@ -168,11 +168,17 @@ macro_rules! doc_comment {
 /// // The two next lines are doing exactly the same thing:
 /// doc_comment!(include_str!("../README.md"));
 /// doctest!("../README.md");
+///
+/// // If you want to have a name for your tests:
+/// doctest!("../README.md", another);
 /// # fn main() {}
 /// ```
 #[macro_export]
 macro_rules! doctest {
     ($x:expr) => {
         doc_comment!(include_str!($x));
+    };
+    ($x:expr, $y:ident) => {
+        doc_comment!(include_str!($x), mod $y {});
     };
 }

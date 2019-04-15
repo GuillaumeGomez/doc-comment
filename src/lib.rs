@@ -176,9 +176,11 @@ macro_rules! doc_comment {
 #[macro_export]
 macro_rules! doctest {
     ($x:expr) => {
-        doc_comment!(include_str!($x));
+        #[doc = $x]
+	extern {}
     };
     ($x:expr, $y:ident) => {
-        doc_comment!(include_str!($x), mod $y {});
+        #[doc = $x]
+	mod $y {}
     };
 }

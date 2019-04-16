@@ -173,14 +173,13 @@ macro_rules! doc_comment {
 /// doctest!("../README.md", another);
 /// # fn main() {}
 /// ```
+#[cfg(not(feature = "no_core"))]
 #[macro_export]
 macro_rules! doctest {
     ($x:expr) => {
-        #[doc = $x]
-	extern {}
+        doc_comment::doc_comment!(include_str!($x));
     };
     ($x:expr, $y:ident) => {
-        #[doc = $x]
-	mod $y {}
+        doc_comment::doc_comment!(include_str!($x), mod $y {});
     };
 }

@@ -1,6 +1,6 @@
 [package]
 name = "doc-comment"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Guillaume Gomez <guillaume1.gomez@gmail.com>"]
 
 documentation = "http://docs.rs/crate/doc-comment"
@@ -8,7 +8,7 @@ repository = "https://github.com/GuillaumeGomez/doc-comment"
 readme = "README.md"
 license = "MIT"
 description = "Macro to generate doc comments"
-edition = "2018"
+build = "build.rs"
 
 [lib]
 name = "doc_comment"
@@ -18,3 +18,4 @@ travis-ci = { repository = "GuillaumeGomez/doc-comment" }
 
 [features]
 no_core = []
+old_macros = []

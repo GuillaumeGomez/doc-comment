@@ -121,9 +121,10 @@
 //! file:
 //!
 //! ```
+//! #[macro_use]
 //! extern crate doc_comment;
 //!
-//! doc_comment::doctest!("../README.md");
+//! doctest!("../README.md");
 //! # fn main() {}
 //! ```
 
@@ -133,14 +134,14 @@
 /// # Example
 ///
 /// ```
+/// #[macro_use]
 /// extern crate doc_comment;
 ///
 /// // If you just want to test an outer markdown file:
-/// doc_comment::doc_comment!(include_str!("../README.md"));
+/// doc_comment!(include_str!("../README.md"));
 ///
 /// // If you want to document an item:
-/// doc_comment::doc_comment!("fooo", pub struct Foo {});
-///
+/// doc_comment!("fooo", pub struct Foo {});
 /// # fn main() {}
 /// ```
 #[macro_export]
@@ -160,7 +161,6 @@ macro_rules! doc_comment {
 /// # Example
 ///
 /// ```
-/// #[macro_use]
 /// extern crate doc_comment;
 ///
 /// // The two next lines are doing exactly the same thing:
@@ -171,6 +171,7 @@ macro_rules! doc_comment {
 /// doc_comment::doctest!("../README.md", another);
 /// # fn main() {}
 /// ```
+#[cfg(not(feature = "old_macros"))]
 #[macro_export]
 macro_rules! doctest {
     ($x:expr) => {
@@ -178,5 +179,32 @@ macro_rules! doctest {
     };
     ($x:expr, $y:ident) => {
         doc_comment::doc_comment!(include_str!($x), mod $y {});
+    };
+}
+
+/// This macro provides a simpler way to test an outer markdown file.
+///
+/// # Example
+///
+/// ```
+/// #[macro_use]
+/// extern crate doc_comment;
+///
+/// // The two next lines are doing exactly the same thing:
+/// doc_comment!(include_str!("../README.md"));
+/// doctest!("../README.md");
+///
+/// // If you want to have a name for your tests:
+/// doctest!("../README.md", another);
+/// # fn main() {}
+/// ```
+#[cfg(feature = "old_macros")]
+#[macro_export]
+macro_rules! doctest {
+    ($x:expr) => {
+        doc_comment!(include_str!($x));
+    };
+    ($x:expr, $y:ident) => {
+        doc_comment!(include_str!($x), mod $y {});
     };
 }

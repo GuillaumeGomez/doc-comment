@@ -12,15 +12,16 @@ Write doc comments from macros.
 
 ## Usage example
 
-````Rust
+````rust
 // Of course, we need to import the `doc_comment` macro:
+#[macro_use]
 extern crate doc_comment;
 
 // If you want to test examples in your README file.
-doc_comment::doctest!("../README.md");
+doctest!("../README.md");
 
 // If you want to document an item:
-doc_comment::doc_comment!(concat!("fooo", "or not foo"), pub struct Foo {});
+doc_comment!(concat!("fooo", "or not foo"), pub struct Foo {});
 ````
 
 For more information, take a look at the [documentation][doc].

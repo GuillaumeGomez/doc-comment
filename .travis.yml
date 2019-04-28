@@ -3,6 +3,7 @@ rust:
   - nightly
   - beta
   - stable
+  - 1.24.1
 script:
   - rustc --version
   - (rustc --version | grep nightly && echo "nightly build!") || touch not_nightly

@@ -16,7 +16,7 @@ Write doc comments from macros.
     <img src="https://assets.readmeads.com/advertisers/readmeads/doc-comment.png?" />
 </a>
 
-FullStack is proudly supported by [ReadMeAds](https://g.readmeads.com/readmeads-doc-comment).  ReadMeAds is the best way to start passively monetizing the open source work that you do.  
+Doc Comment is proudly supported by [ReadMeAds](https://g.readmeads.com/readmeads-doc-comment).  ReadMeAds is the best way to start passively monetizing the open source work that you do.  
 
 ## Usage example
 

@@ -10,6 +10,14 @@
 
 Write doc comments from macros.
 
+## Sponsor
+
+<a href="https://g.readmeads.com/readmeads-doc-comment" target="_blank">
+    <img src="https://assets.readmeads.com/advertisers/readmeads/doc-comment.png?" />
+</a>
+
+Doc Comment is proudly supported by [ReadMeAds](https://g.readmeads.com/readmeads-doc-comment).  ReadMeAds is the best way to start passively monetizing the open source work that you do.  
+
 ## Usage example
 
 ````rust

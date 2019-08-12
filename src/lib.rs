@@ -142,6 +142,41 @@
 ///
 /// // If you want to document an item:
 /// doc_comment!("fooo", pub struct Foo {});
+/// doc_comment!("fooo?", struct Fooo(usize));
+/// # fn main() {}
+/// ```
+///
+/// # More advanced usage
+///
+/// It's also possible to use this macro to add documentation on types' fields as well,
+/// but then you'll have to declare the full type inside the macro:
+///
+/// ```
+/// #[macro_use]
+/// extern crate doc_comment;
+///
+/// doc_comment!(
+///     pub struct Bar { // no doc comment on the type itself since it's optional
+///         "field", // <- the comma here is mandatory
+///         pub field: usize,
+///         "hidden field", // <- still mandatory
+///         private_field: usize, // commas are mandatory after fields declaration as well
+///     }
+/// );
+/// 
+/// doc_comment!(
+///     "This is an enum!", // <- comma is mandatory
+///     enum Enum {
+///         "first variant", // <- the comma here is mandatory
+///         #[cfg(windows)]
+///         Variant(usize),
+///         "second variant", // still mandatory
+///         SecondVariant,
+///         "foo",
+///         Third {foo: usize},
+///         NoDocComment, // Doc comments are optional
+///     }
+/// );
 /// # fn main() {}
 /// ```
 #[macro_export]
@@ -149,6 +184,53 @@ macro_rules! doc_comment {
     ($x:expr) => {
         #[doc = $x]
         extern {}
+    };
+    // enum types
+    ($($x:expr,)? $visibility:vis enum $ty_name:ident {
+        $(
+          $($y:expr,)? // the doc comment if any
+          $(#[$meta:meta])? // metadata
+          $field:ident // variant name
+          $(($($field_ty:ty $(,)?)+))? // newtype-like variant such as Variant(usize)
+          $({
+              $($field_name2:ident: $field_ty2:ty $(,)?)+
+            })?, // struct-like variant such as Variant { foo: usize }
+        )*
+    }) => {
+        $(#[doc = $x])?
+        $visibility enum $ty_name {
+            $($(#[doc = $y])?
+              $(#[$meta])?
+              $field $(($($field_ty,)+))? $({$($field_name2: $field_ty2 ,)+})?,)*
+        }
+    };
+    // struct types
+    ($($x:expr,)? $visibility:vis struct $ty_name:ident {
+        $(
+          $($y:expr,)? // the doc comment if any
+          $(#[$meta:meta])? // metadata
+          $visibility_i:vis $field:ident: $typ:ty ,)*
+    }) => {
+        $(#[doc = $x])?
+        $visibility struct $ty_name {
+            $($(#[doc = $y])?
+              $(#[$meta])?
+              $visibility_i $field: $typ,)*
+        }
+    };
+    // union types
+    ($($x:expr,)? $visibility:vis union $ty_name:ident {
+        $(
+          $($y:expr,)? // the doc comment if any
+          $(#[$meta:meta])? // metadata
+          $visibility_i:vis $field:ident: $typ:ty ,)*
+    }) => {
+        $(#[doc = $x])?
+        $visibility struct $ty_name {
+            $($(#[doc = $y])?
+              $(#[$meta])?
+              $visibility_i $field: $typ,)*
+        }
     };
     ($x:expr, $($tt:tt)*) => {
         #[doc = $x]

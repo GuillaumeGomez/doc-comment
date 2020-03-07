@@ -20,6 +20,10 @@ extern crate doc_comment;
 // If you want to test examples in your README file.
 doctest!("../README.md");
 
+// If you want to test your README file ONLY on "cargo test":
+#[cfg(doctest)]
+doctest!("../README.md");
+
 // If you want to document an item:
 doc_comment!(concat!("fooo", "or not foo"), pub struct Foo {});
 ````

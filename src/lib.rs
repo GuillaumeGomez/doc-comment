@@ -11,7 +11,61 @@
 //! The point of this (small) crate is to allow you to add doc comments from macros or
 //! to test external markdown files' code blocks through `rustdoc`.
 //!
-//! It's especially useful when generating types with macros. For example:
+//! ## Including file(s) for testing
+//!
+//! Let's assume you want to test code examples in your `README.md` file which
+//! looks like this:
+//!
+//! ````text
+//! # A crate
+//!
+//! Here is a code example:
+//!
+//! ```rust
+//! let x = 2;
+//! assert!(x != 0);
+//! ```
+//! ````
+//!
+//! You can use the `doc_comment!` macro to test it like this:
+//!
+//! ```
+//! #[macro_use]
+//! extern crate doc_comment;
+//!
+//! // When running `cargo test`, rustdoc will check this file as well.
+//! doc_comment!(include_str!("../README.md"));
+//! # fn main() {}
+//! ```
+//!
+//! Please note that can also use the `doctest!` macro to have a shorter way to test an outer
+//! file:
+//!
+//! ```no_run
+//! #[macro_use]
+//! extern crate doc_comment;
+//!
+//! doctest!("../README.md");
+//! # fn main() {}
+//! ```
+//!
+//! Please also note that you can use `#[cfg(doctest)]`:
+//!
+//! ```no_run
+//! # #[macro_use]
+//! # extern crate doc_comment;
+//! #[cfg(doctest)]
+//! doctest!("../README.md");
+//! # fn main() {}
+//! ```
+//!
+//! In this case, the examples in the `README.md` file will only be run on `cargo test`. You
+//! can find more information about `#[cfg(doctest)]` in [this blogpost](https://blog.guillaume-gomez.fr/articles/2020-03-07+cfg%28doctest%29+is+stable+and+you+should+use+it).
+//!
+//! ## Generic documentation
+//!
+//! Now let's imagine you want to write documentation once for multiple types but
+//! still having examples specific to each type:
 //!
 //! ```
 //! // The macro which generates types
@@ -91,42 +145,6 @@
 //!     # fn main() {}
 //!
 //! Now each struct has doc which match itself!
-//!
-//! Now let's assume you want to test code examples in your `README.md` file which
-//! looks like this:
-//!
-//! ````text
-//! # A crate
-//!
-//! Here is a code example:
-//!
-//! ```rust
-//! let x = 2;
-//! assert!(x != 0);
-//! ```
-//! ````
-//!
-//! You can use the `doc_comment!` macro to test it like this:
-//!
-//! ```
-//! #[macro_use]
-//! extern crate doc_comment;
-//!
-//! // When running `cargo test`, rustdoc will check this file as well.
-//! doc_comment!(include_str!("../README.md"));
-//! # fn main() {}
-//! ```
-//!
-//! Please note that can also use the `doctest!` macro to have a shorter way to test an outer
-//! file:
-//!
-//! ```
-//! #[macro_use]
-//! extern crate doc_comment;
-//!
-//! doctest!("../README.md");
-//! # fn main() {}
-//! ```
 
 /// This macro can be used to generate documentation upon a type/item (or just to test outer
 /// markdown file code examples).

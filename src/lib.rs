@@ -4,147 +4,134 @@
 // Copyright (c) 2018 Guillaume Gomez
 //
 
-// ! The point of this (small) crate is to allow you to add doc comments from macros or
-// ! to test external markdown files' code blocks through `rustdoc`.
-// !
-// ! ## Including file(s) for testing
-// !
-// ! Let's assume you want to test code examples in your `README.md` file which
-// ! looks like this:
-// !
-// ! ````text
-// ! # A crate
-// !
-// ! Here is a code example:
-// !
-// ! ```rust
-// ! let x = 2;
-// ! assert!(x != 0);
-// ! ```
-// ! ````
-// !
-// ! You can use the `doc_comment!` macro to test it like this:
-// !
-// ! ```
-// ! #[macro_use]
-// ! extern crate doc_comment;
-// !
-// ! // When running `cargo test`, rustdoc will check this file as well.
-// ! doc_comment!(include_str!("../README.md"));
-// ! # fn main() {}
-// ! ```
-// !
-// ! Please note that can also use the `doctest!` macro to have a shorter way to test an outer
-// ! file:
-// !
-// ! ```no_run
-// ! extern crate doc_comment;
-// !
-// ! doc_comment::doctest!("../README.md");
-// ! # fn main() {}
-// ! ```
-// !
-// ! Please also note that you can use `#[cfg(doctest)]`:
-// !
-// ! ```no_run
-// ! #[cfg(doctest)]
-// ! doc_comment::doctest!("../README.md");
-// ! # fn main() {}
-// ! ```
-// !
-// ! In this case, the examples in the `README.md` file will only be run on `cargo test`. You
-// ! can find more information about `#[cfg(doctest)]` in [this blogpost](https://blog.guillaume-gomez.fr/articles/2020-03-07+cfg%28doctest%29+is+stable+and+you+should+use+it).
-// !
-// ! ## Generic documentation
-// !
-// ! Now let's imagine you want to write documentation once for multiple types but
-// ! still having examples specific to each type:
-// !
-// ! ```
-// ! // The macro which generates types
-// ! macro_rules! gen_types {
-// !     ($tyname:ident) => {
-// !         /// This is a wonderful generated struct!
-// !         ///
-// !         /// You can use it as follow:
-// !         ///
-// !         /// ```
-// !         /// let x = FirstOne {
-// !         ///     field1: 0,
-// !         ///     field2: 0,
-// !         ///     field3: 0,
-// !         ///     field4: 0,
-// !         /// };
-// !         ///
-// !         /// println!("Created a new instance of FirstOne: {:?}", x);
-// !         /// ```
-// !         #[derive(Debug)]
-// !         pub struct $tyname {
-// !             pub field1: u8,
-// !             pub field2: u16,
-// !             pub field3: u32,
-// !             pub field4: u64,
-// !         }
-// !     }
-// ! }
-// !
-// ! // Now let's actually generate types:
-// ! gen_types!(FirstOne);
-// ! gen_types!(SecondOne);
-// ! gen_types!(Another);
-// ! ```
-// !
-// ! So now we have created three structs with different names, but they all have the exact same
-// ! documentation, which is an issue for any structs not called `FirstOne`. That's where
-// ! [`doc_comment!`] macro comes in handy!
-// !
-// ! Let's rewrite the `gen_types!` macro:
-// !
-// !     // Of course, we need to import the `doc_comment` macro:
-// !     #[macro_use]
-// !     extern crate doc_comment;
-// !
-// !     macro_rules! gen_types {
-// !         ($tyname:ident) => {
-// !             doc_comment! {
-// !     concat!("This is a wonderful generated struct!
-// !
-// !     You can use it as follow:
-// !
-// !     ```
-// !     let x = ", stringify!($tyname), " {
-// !         field1: 0,
-// !         field2: 0,
-// !         field3: 0,
-// !         field4: 0,
-// !     };
-// !
-// !     println!(\"Created a new instance of ", stringify!($tyname), ": {:?}\", x);
-// !     ```"),
-// !                 #[derive(Debug)]
-// !                 pub struct $tyname {
-// !                     pub field1: u8,
-// !                     pub field2: u16,
-// !                     pub field3: u32,
-// !                     pub field4: u64,
-// !                 }
-// !             }
-// !         }
-// !     }
-// !
-// !     gen_types!(FirstOne);
-// !     gen_types!(SecondOne);
-// !     gen_types!(Another);
-// !     # fn main() {}
-// !
-// ! Now each struct has doc which match itself!
+//! The point of this (small) crate is to allow you to add doc comments from macros or
+//! to test external markdown files' code blocks through `rustdoc`.
+//!
+//! ## Including file(s) for testing
+//!
+//! Let's assume you want to test code examples in your `README.md` file which
+//! looks like this:
+//!
+//! ````text
+//! # A crate
+//!
+//! Here is a code example:
+//!
+//! ```rust
+//! let x = 2;
+//! assert!(x != 0);
+//! ```
+//! ````
+//!
+//! You can use the `doc_comment!` macro to test it like this:
+//!
+//! ```no_run
+//! extern crate doc_comment;
+//!
+//! // When running `cargo test`, rustdoc will check this file as well.
+//! doc_comment::doctest!("../README.md");
+//! # fn main() {}
+//! ```
+//!
+//! Please also note that you can use `#[cfg(doctest)]`:
+//!
+//! ```no_run
+//! #[cfg(doctest)]
+//! doc_comment::doctest!("../README.md");
+//! # fn main() {}
+//! ```
+//!
+//! In this case, the examples in the `README.md` file will only be run on `cargo test`. You
+//! can find more information about `#[cfg(doctest)]` in [this blogpost](https://blog.guillaume-gomez.fr/articles/2020-03-07+cfg%28doctest%29+is+stable+and+you+should+use+it).
+//!
+//! ## Generic documentation
+//!
+//! Now let's imagine you want to write documentation once for multiple types but
+//! still having examples specific to each type:
+//!
+//! ``````
+//! // The macro which generates types
+//! macro_rules! gen_types {
+//!     ($tyname:ident) => {
+//!         /// This is a wonderful generated struct!
+//!         ///
+//!         /// You can use it as follow:
+//!         ///
+//!         /// ```
+//!         /// let x = FirstOne {
+//!         ///     field1: 0,
+//!         ///     field2: 0,
+//!         ///     field3: 0,
+//!         ///     field4: 0,
+//!         /// };
+//!         ///
+//!         /// println!("Created a new instance of FirstOne: {:?}", x);
+//!         /// ```
+//!         #[derive(Debug)]
+//!         pub struct $tyname {
+//!             pub field1: u8,
+//!             pub field2: u16,
+//!             pub field3: u32,
+//!             pub field4: u64,
+//!         }
+//!     }
+//! }
+//!
+//! // Now let's actually generate types:
+//! gen_types!(FirstOne);
+//! gen_types!(SecondOne);
+//! gen_types!(Another);
+//! ``````
+//!
+//! So now we have created three structs with different names, but they all have the exact same
+//! documentation, which is an issue for any structs not called `FirstOne`. That's where
+//! [`doc_comment!`] macro comes in handy!
+//!
+//! Let's rewrite the `gen_types!` macro:
+//!
+//! ``````
+//! // Of course, we need to import the `doc_comment` macro:
+//! extern crate doc_comment;
+//!
+//! macro_rules! gen_types {
+//!     ($tyname:ident) => {
+//!         #[doc_comment::doc_comment("This is a wonderful generated struct!
+//!
+//! You can use it as follow:
+//!
+//! ```
+//! let x = ", $tyname, " {
+//!     field1: 0,
+//!     field2: 0,
+//!     field3: 0,
+//!     field4: 0,
+//! };
+//! println!(\"Created a new instance of ", $tyname, ": {:?}\", x);
+//! ```")]
+//!         #[derive(Debug)]
+//!         pub struct $tyname {
+//!             pub field1: u8,
+//!             pub field2: u16,
+//!             pub field3: u32,
+//!             pub field4: u64,
+//!         }
+//!     }
+//! }
+//!
+//! gen_types!(FirstOne);
+//! gen_types!(SecondOne);
+//! gen_types!(Another);
+//! # fn main() {}
+//! ``````
+//!
+//! Now each struct has doc which match itself!
 
 extern crate proc_macro;
 
 use proc_macro::token_stream::IntoIter as ProcIter;
 use proc_macro::{Delimiter, TokenStream, TokenTree};
 use std::fs;
-use std::iter::Peekable;
+use std::iter::{FromIterator, Peekable};
 use std::path::Path;
 use std::str::FromStr;
 
@@ -229,11 +216,30 @@ fn parse_attr(attrs: TokenStream, includes: &mut String, is_inner: bool) -> Stri
                 }
             }
             TokenTree::Punct(p) if p.to_string() == "," => {}
-            TokenTree::Ident(i) if attrs.peek().map(|a| a.to_string() == "!") == Some(true) => {
-                parse_macro_call(i.to_string(), &mut attrs, &mut out, includes);
+            TokenTree::Ident(i) => {
+                if attrs.peek().map(|a| a.to_string() == "!") == Some(true) {
+                    parse_macro_call(i.to_string(), &mut attrs, &mut out, includes);
+                } else {
+                    out.push_str(&i.to_string());
+                }
+            }
+            TokenTree::Group(g) if g.delimiter() == Delimiter::None => {
+                // In case we give an ident through a macro, we need to read it from here. However,
+                // if it contains more than just one ident, then it's something else and we need to
+                // panic.
+                let mut it = g.stream().into_iter();
+                match it.next() {
+                    Some(TokenTree::Ident(i)) => {
+                        if it.next().is_some() {
+                            panic!("This token isn't supported: {:?}", g)
+                        }
+                        out.push_str(&i.to_string());
+                    }
+                    _ => panic!("This token isn't supported: {:?}", g),
+                }
             }
             x => {
-                panic!("Only literals are expected, found: {:?}", x);
+                panic!("This token isn't supported: {:?}", x);
             }
         }
     }
@@ -250,11 +256,14 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
         };
         match attr {
             TokenTree::Group(g) => {
+                if !out.ends_with("#") {
+                    out.push_str(" ");
+                }
                 out.push_str(match g.delimiter() {
-                    Delimiter::Parenthesis => " (",
-                    Delimiter::Brace => " {",
-                    Delimiter::Bracket => " [",
-                    Delimiter::None => " ",
+                    Delimiter::Parenthesis => "(",
+                    Delimiter::Brace => "{",
+                    Delimiter::Bracket => "[",
+                    Delimiter::None => "",
                 });
                 out.push_str(&parse_item(g.stream().into_iter().peekable(), includes));
                 out.push_str(match g.delimiter() {
@@ -273,6 +282,7 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
                         _ => {
                             out.push_str(" ");
                             out.push_str(&x.to_string());
+                            continue
                         }
                     }
                     match sub_parts.next() {
@@ -319,10 +329,11 @@ fn check_if_is_inner(item: &mut Peekable<ProcIter>) -> bool {
 /// pub fn foo() {}
 ///
 /// #[dc("enum ", "time!")]
+/// #[derive(Debug)]
 /// pub enum Foo {
 ///     #[doc_comment("variant ", 1)]
 ///     A,
-///     #[doc_comment("variant ", 2)]
+///     #[doc_comment("variant ", 2, hello)]
 ///     B,
 /// }
 /// ```
@@ -337,11 +348,10 @@ fn check_if_is_inner(item: &mut Peekable<ProcIter>) -> bool {
 /// ```
 #[proc_macro_attribute]
 pub fn doc_comment(attrs: TokenStream, item: TokenStream) -> TokenStream {
-    use proc_macro::token_stream::IntoIter;
-    use std::iter::FromIterator;
     let mut includes = String::new();
     let mut item = item.into_iter().peekable();
     let is_inner = check_if_is_inner(&mut item);
+    // let attr = parse_attr(attrs, &mut includes, is_inner);
     let attr = TokenStream::from_str(&parse_attr(attrs, &mut includes, is_inner))
         .unwrap()
         .into_iter();
@@ -349,20 +359,24 @@ pub fn doc_comment(attrs: TokenStream, item: TokenStream) -> TokenStream {
         let item = TokenStream::from_str(&parse_item(item, &mut includes))
             .unwrap()
             .into_iter();
-        let includes: IntoIter = TokenStream::from_str(&includes).unwrap().into_iter();
+        let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
         TokenStream::from_iter(attr.chain(item).chain(includes))
     } else {
+        // This whole thing is just a non-working hack because when you're writing an inner
+        // attribute with this proc-macro, it strangely returns an anonymous module wrapping
+        // everything inside the current scope. But if you try to insert or modify anything, it
+        // doesn't work so for now, it's completely useless...
         loop {
             match item.next() {
                 Some(TokenTree::Group(g)) => {
-                    let tokens: IntoIter = g.stream().into_iter();
-                    let includes: IntoIter = TokenStream::from_str(&includes).unwrap().into_iter();
+                    let tokens: ProcIter = g.stream().into_iter();
+                    let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
 
                     return TokenStream::from_iter(attr.chain(tokens).chain(includes));
                 }
                 Some(_) => {}
                 None => {
-                    let includes: IntoIter = TokenStream::from_str(&includes).unwrap().into_iter();
+                    let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
                     // Weird case... It would meant that we can't find a "TokenTree::Group" where
                     // the inner attribute would be located...
                     return TokenStream::from_iter(attr.chain(includes));
@@ -441,3 +455,20 @@ pub fn doctest(item: TokenStream) -> TokenStream {
         .parse()
         .unwrap()
 }
+
+// Maybe if some day the proc-macros are supported at the crate level?
+//
+// /// ```no_run
+// /// doc_comment::crate_doc!(include_str!("../README.md"));
+// /// # fn main() {}
+// /// ```
+// #[proc_macro]
+// pub fn crate_doc(item: TokenStream) -> TokenStream {
+//     let mut includes = String::new();
+//     TokenStream::from_iter(
+//         TokenStream::from_str(&parse_attr(item, &mut includes, true))
+//             .unwrap()
+//             .into_iter()
+//             .chain(TokenStream::from_str(&includes).unwrap().into_iter())
+//     )
+// }

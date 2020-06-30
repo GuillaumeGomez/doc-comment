@@ -1,0 +1,12 @@
+[package]
+name = "test-ci"
+version = "0.0.1"
+authors = ["Guillaume Gomez <guillaume1.gomez@gmail.com>"]
+description = "just checking the README file!"
+
+[dependencies]
+doc-comment = { path = ".." }
+
+[lib]
+name = "test_ci"
+path = "lib.rs"

@@ -8,14 +8,10 @@ repository = "https://github.com/GuillaumeGomez/doc-comment"
 readme = "README.md"
 license = "MIT"
 description = "Macro to generate doc comments"
-build = "build.rs"
 
 [lib]
 name = "doc_comment"
+proc-macro = true
 
 [badges]
 travis-ci = { repository = "GuillaumeGomez/doc-comment" }
-
-[features]
-no_core = []
-old_macros = []

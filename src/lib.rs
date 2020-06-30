@@ -29,7 +29,7 @@
 //! extern crate doc_comment;
 //!
 //! // When running `cargo test`, rustdoc will check this file as well.
-//! doc_comment::doctest!("../README.md");
+//! doc_comment::doctest! { "../README.md" }
 //! # fn main() {}
 //! ```
 //!
@@ -37,7 +37,7 @@
 //!
 //! ```no_run
 //! #[cfg(doctest)]
-//! doc_comment::doctest!("../README.md");
+//! doc_comment::doctest! { "../README.md" }
 //! # fn main() {}
 //! ```
 //!
@@ -391,13 +391,13 @@ pub fn doc_comment(attrs: TokenStream, item: TokenStream) -> TokenStream {
 /// # Example
 ///
 /// ```edition2018,no_run
-/// doc_comment::doctest!("../README.md");
+/// doc_comment::doctest! { "../README.md" }
 /// // It is the equivalent of:
 /// #[doc_comment::doc_comment(include_str!("../README.md"))]
 /// extern {}
 ///
 /// // If you want to have a name for your tests:
-/// doc_comment::doctest!("../README.md", another);
+/// doc_comment::doctest! { "../README.md", another }
 /// # fn main() {}
 /// ```
 #[proc_macro]

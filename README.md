@@ -12,11 +12,13 @@ Write doc comments from macros.
 
 ## Usage example
 
-````rust
+````rust,no_run,edition2018
 extern crate doc_comment;
 
 // If you want to test examples in your README file.
 doc_comment::doctest!("../README.md");
+// If you want to "name" your tests.
+doc_comment::doctest!("../README.md", readme);
 
 // If you want to test your README file ONLY on "cargo test":
 #[cfg(doctest)]
@@ -24,7 +26,10 @@ doc_comment::doctest!("../README.md");
 
 // If you want to document an item:
 #[doc_comment::doc_comment("fooo", "or not foo")]
-pub struct Foo {}
+pub struct Foo {
+    #[doc_comment("a field!")]
+    field: i32,
+}
 ````
 
 ## proc-macro

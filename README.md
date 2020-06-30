@@ -27,6 +27,10 @@ doc_comment::doctest!("../README.md");
 pub struct Foo {}
 ````
 
+## proc-macro
+
+From the version `0.4`, this crate will use `proc-macro` instead of `macros`, meaning that the minimum rust version will also greatly increase. If you don't want the `proc-macro` then use the `0.3.*` versions!
+
 For more information, take a look at the [documentation][doc].
 
 [doc]: https://docs.rs/doc-comment/

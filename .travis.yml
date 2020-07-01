@@ -3,10 +3,12 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.24.1
+  - 1.38.0
 script:
   - rustc --version
-  - (rustc --version | grep nightly && echo "nightly build!") || touch not_nightly
   - cargo build
   - cargo test
-  - if [ ! -f not_nightly ]; then cargo test --features no_core; fi
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ] || [ "$TRAVIS_RUST_VERSION" == "beta" ]; then
+      cd ci-tests;
+      cargo test;
+    fi

@@ -12,21 +12,29 @@ Write doc comments from macros.
 
 ## Usage example
 
-````rust
-// Of course, we need to import the `doc_comment` macro:
-#[macro_use]
+````rust,no_run,edition2018
 extern crate doc_comment;
 
 // If you want to test examples in your README file.
-doctest!("../README.md");
+doc_comment::doctest!("../README.md");
+// If you want to "name" your tests.
+doc_comment::doctest!("../README.md", readme);
 
 // If you want to test your README file ONLY on "cargo test":
 #[cfg(doctest)]
-doctest!("../README.md");
+doc_comment::doctest!("../README.md");
 
 // If you want to document an item:
-doc_comment!(concat!("fooo", "or not foo"), pub struct Foo {});
+#[doc_comment::doc_comment("fooo", "or not foo")]
+pub struct Foo {
+    #[doc_comment("a field!")]
+    field: i32,
+}
 ````
+
+## proc-macro
+
+From the version `0.4`, this crate will use `proc-macro` instead of `macros`, meaning that the minimum rust version will also greatly increase. If you don't want the `proc-macro` then use the `0.3.*` versions!
 
 For more information, take a look at the [documentation][doc].
 

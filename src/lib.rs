@@ -29,7 +29,7 @@
 //! extern crate doc_comment;
 //!
 //! // When running `cargo test`, rustdoc will check this file as well.
-//! doc_comment::doctest!("../README.md");
+//! doc_comment::doctest!{ "../README.md" }
 //! # fn main() {}
 //! ```
 //!
@@ -37,7 +37,7 @@
 //!
 //! ```no_run,allow_fail
 //! #[cfg(doctest)]
-//! doc_comment::doctest!("../README.md");
+//! doc_comment::doctest!{ "../README.md" }
 //! # fn main() {}
 //! ```
 //!

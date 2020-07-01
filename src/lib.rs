@@ -247,6 +247,13 @@ fn parse_attr(attrs: TokenStream, includes: &mut String, is_inner: bool) -> Stri
     out
 }
 
+fn next_is_ident(parts: &mut Peekable<ProcIter>) -> bool {
+    match parts.peek() {
+        Some(TokenTree::Ident(_)) => true,
+        _ => false,
+    }
+}
+
 fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
     let mut out = String::new();
     loop {
@@ -256,9 +263,6 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
         };
         match attr {
             TokenTree::Group(g) => {
-                if !out.ends_with("#") {
-                    out.push_str(" ");
-                }
                 out.push_str(match g.delimiter() {
                     Delimiter::Parenthesis => "(",
                     Delimiter::Brace => "{",
@@ -280,32 +284,31 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
                     match sub_parts.next() {
                         Some(TokenTree::Ident(ref i)) if i.to_string() == "doc_comment" => {}
                         _ => {
-                            out.push_str(" ");
                             out.push_str(&x.to_string());
                             continue;
                         }
                     }
                     match sub_parts.next() {
                         Some(TokenTree::Group(g)) => {
-                            out.push_str(" ");
                             out.push_str(&parse_attr(g.stream(), includes, false));
                             parts.next();
                         }
                         _ => {
-                            out.push_str(" ");
                             out.push_str(&x.to_string());
                         }
                     }
                 }
                 _ => {
-                    out.push_str(" ");
                     out.push_str(&x.to_string());
                 }
             },
-            x => {
-                if !out.ends_with("#") {
+            TokenTree::Ident(i) => {
+                out.push_str(&i.to_string());
+                if next_is_ident(&mut parts) {
                     out.push_str(" ");
                 }
+            }
+            x => {
                 out.push_str(&x.to_string());
             }
         }
@@ -313,14 +316,14 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
     out
 }
 
-fn check_if_is_inner(item: &mut Peekable<ProcIter>) -> bool {
-    match item.peek() {
-        Some(TokenTree::Ident(i)) => {
-            i.to_string().is_empty() || format!("{:?}", i.span()) == "#0 bytes(0..0)"
-        }
-        _ => false,
-    }
-}
+// fn check_if_is_inner(item: &mut Peekable<ProcIter>) -> bool {
+//     match item.peek() {
+//         Some(TokenTree::Ident(i)) => {
+//             i.to_string().is_empty() || format!("{:?}", i.span()) == "#0 bytes(0..0)"
+//         }
+//         _ => false,
+//     }
+// }
 
 /// ```edition2018,no_run
 /// use doc_comment::doc_comment as dc;
@@ -349,39 +352,49 @@ fn check_if_is_inner(item: &mut Peekable<ProcIter>) -> bool {
 #[proc_macro_attribute]
 pub fn doc_comment(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let mut includes = String::new();
-    let mut item = item.into_iter().peekable();
-    let is_inner = check_if_is_inner(&mut item);
-    let attr = TokenStream::from_str(&parse_attr(attrs, &mut includes, is_inner))
-        .unwrap()
-        .into_iter();
-    if !is_inner {
-        let item = TokenStream::from_str(&parse_item(item, &mut includes))
+    // let is_inner = check_if_is_inner(&mut item);
+    let is_inner = false;
+    #[cfg(not(feature = "debug"))]
+    {
+       let mut item = item.into_iter().peekable();
+        let attr = TokenStream::from_str(&parse_attr(attrs, &mut includes, is_inner))
             .unwrap()
             .into_iter();
-        let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
-        TokenStream::from_iter(attr.chain(item).chain(includes))
-    } else {
-        // This whole thing is just a non-working hack because when you're writing an inner
-        // attribute with this proc-macro, it strangely returns an anonymous module wrapping
-        // everything inside the current scope. But if you try to insert or modify anything, it
-        // doesn't work so for now, it's completely useless...
-        loop {
-            match item.next() {
-                Some(TokenTree::Group(g)) => {
-                    let tokens: ProcIter = g.stream().into_iter();
-                    let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
+        if !is_inner {
+            let item = TokenStream::from_str(&parse_item(item, &mut includes))
+                .unwrap()
+                .into_iter();
+            let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
+            TokenStream::from_iter(attr.chain(item).chain(includes))
+        } else {
+            // This whole thing is just a non-working hack because when you're writing an inner
+            // attribute with this proc-macro, it strangely returns an anonymous module wrapping
+            // everything inside the current scope. But if you try to insert or modify anything, it
+            // doesn't work so for now, it's completely useless...
+            loop {
+                match item.next() {
+                    Some(TokenTree::Group(g)) => {
+                        let tokens: ProcIter = g.stream().into_iter();
+                        let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
 
-                    return TokenStream::from_iter(attr.chain(tokens).chain(includes));
-                }
-                Some(_) => {}
-                None => {
-                    let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
-                    // Weird case... It would meant that we can't find a "TokenTree::Group" where
-                    // the inner attribute would be located...
-                    return TokenStream::from_iter(attr.chain(includes));
+                        return TokenStream::from_iter(attr.chain(tokens).chain(includes));
+                    }
+                    Some(_) => {}
+                    None => {
+                        let includes: ProcIter = TokenStream::from_str(&includes).unwrap().into_iter();
+                        // Weird case... It would meant that we can't find a "TokenTree::Group" where
+                        // the inner attribute would be located...
+                        return TokenStream::from_iter(attr.chain(includes));
+                    }
                 }
             }
         }
+    }
+    #[cfg(feature = "debug")]
+    {
+        let attr = parse_attr(attrs, &mut includes, is_inner);
+        let it = parse_item(item.into_iter().peekable(), &mut includes);
+        panic!("{}\n{}\n{}", attr, it, includes);
     }
 }
 

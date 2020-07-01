@@ -1,6 +1,6 @@
 [package]
 name = "doc-comment"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Guillaume Gomez <guillaume1.gomez@gmail.com>"]
 
 documentation = "http://docs.rs/crate/doc-comment"

@@ -8,5 +8,7 @@ script:
   - rustc --version
   - cargo build
   - cargo test
-  - cd ci-tests
-  - cargo test
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ] || [ "$TRAVIS_RUST_VERSION" == "beta" ]; then
+      cd ci-tests;
+      cargo test;
+    fi

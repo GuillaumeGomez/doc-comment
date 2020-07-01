@@ -29,15 +29,15 @@
 //! extern crate doc_comment;
 //!
 //! // When running `cargo test`, rustdoc will check this file as well.
-//! doc_comment::doctest! { "../README.md" }
+//! doc_comment::doctest!("../README.md");
 //! # fn main() {}
 //! ```
 //!
 //! Please also note that you can use `#[cfg(doctest)]`:
 //!
-//! ```no_run
+//! ```no_run,allow_fail
 //! #[cfg(doctest)]
-//! doc_comment::doctest! { "../README.md" }
+//! doc_comment::doctest!("../README.md");
 //! # fn main() {}
 //! ```
 //!
@@ -282,7 +282,7 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
                         _ => {
                             out.push_str(" ");
                             out.push_str(&x.to_string());
-                            continue
+                            continue;
                         }
                     }
                     match sub_parts.next() {
@@ -351,7 +351,6 @@ pub fn doc_comment(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let mut includes = String::new();
     let mut item = item.into_iter().peekable();
     let is_inner = check_if_is_inner(&mut item);
-    // let attr = parse_attr(attrs, &mut includes, is_inner);
     let attr = TokenStream::from_str(&parse_attr(attrs, &mut includes, is_inner))
         .unwrap()
         .into_iter();

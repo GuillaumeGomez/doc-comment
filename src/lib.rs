@@ -184,7 +184,7 @@ fn parse_macro_call(
                         let path = Path::new(&l_s);
                         out.push_str(&include_file(&ident, &path, includes));
                     }
-                    TokenTree::Punct(p) if p.to_string() == "," => {}
+                    TokenTree::Punct(ref p) if p.to_string() == "," => {}
                     x => panic!("Unexpected item `{}` in macro call `{}`", x, ident),
                 }
             }
@@ -215,7 +215,7 @@ fn parse_attr(attrs: TokenStream, includes: &mut String, is_inner: bool) -> Stri
                     out.push_str(&print);
                 }
             }
-            TokenTree::Punct(p) if p.to_string() == "," => {}
+            TokenTree::Punct(ref p) if p.to_string() == "," => {}
             TokenTree::Ident(i) => {
                 if attrs.peek().map(|a| a.to_string() == "!") == Some(true) {
                     parse_macro_call(i.to_string(), &mut attrs, &mut out, includes);
@@ -223,7 +223,7 @@ fn parse_attr(attrs: TokenStream, includes: &mut String, is_inner: bool) -> Stri
                     out.push_str(&i.to_string());
                 }
             }
-            TokenTree::Group(g) if g.delimiter() == Delimiter::None => {
+            TokenTree::Group(ref g) if g.delimiter() == Delimiter::None => {
                 // In case we give an ident through a macro, we need to read it from here. However,
                 // if it contains more than just one ident, then it's something else and we need to
                 // panic.
@@ -273,12 +273,12 @@ fn parse_item(mut parts: Peekable<ProcIter>, includes: &mut String) -> String {
                     Delimiter::None => "",
                 });
             }
-            TokenTree::Punct(x) if x.to_string() == "#" => match parts.peek() {
+            TokenTree::Punct(ref x) if x.to_string() == "#" => match parts.peek() {
                 Some(TokenTree::Group(g)) if g.delimiter() == Delimiter::Bracket => {
                     let stream = g.stream();
                     let mut sub_parts = stream.into_iter();
                     match sub_parts.next() {
-                        Some(TokenTree::Ident(i)) if i.to_string() == "doc_comment" => {}
+                        Some(TokenTree::Ident(ref i)) if i.to_string() == "doc_comment" => {}
                         _ => {
                             out.push_str(" ");
                             out.push_str(&x.to_string());
@@ -422,7 +422,7 @@ pub fn doctest(item: TokenStream) -> TokenStream {
                 }
                 file_path = Some(l_s[1..l_s.len() - 1].to_owned());
             }
-            Some(TokenTree::Punct(p)) if p.to_string() == "," => {}
+            Some(TokenTree::Punct(ref p)) if p.to_string() == "," => {}
             Some(TokenTree::Ident(i)) => {
                 let i_s = i.to_string();
                 if file_path.is_none() {

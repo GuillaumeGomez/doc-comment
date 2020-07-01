@@ -3,7 +3,7 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.24.1
+  - 1.38.0
 script:
   - rustc --version
   - cargo build

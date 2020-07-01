@@ -10,6 +10,8 @@
 
 Write doc comments from macros.
 
+For now, please keep using version `0.3.*` as the `0.4` is incomplete and is waiting for https://github.com/rust-lang/rust/issues/47809 to get stabilized.
+
 ## Usage example
 
 ````rust,no_run,edition2018

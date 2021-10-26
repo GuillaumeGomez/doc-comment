@@ -1,9 +1,3 @@
-//
-// Doc comment
-//
-// Copyright (c) 2018 Guillaume Gomez
-//
-
 #![cfg_attr(feature = "no_core", feature(no_core))]
 #![cfg_attr(feature = "no_core", no_core)]
 #![cfg_attr(not(feature = "no_core"), no_std)]
@@ -25,31 +19,8 @@
 //! let x = 2;
 //! assert!(x != 0);
 //! ```
-//! ````
 //!
 //! You can use the `doc_comment!` macro to test it like this:
-//!
-//! ```
-//! #[macro_use]
-//! extern crate doc_comment;
-//!
-//! // When running `cargo test`, rustdoc will check this file as well.
-//! doc_comment!(include_str!("../README.md"));
-//! # fn main() {}
-//! ```
-//!
-//! Please note that can also use the `doctest!` macro to have a shorter way to test an outer
-//! file:
-//!
-//! ```no_run
-//! #[macro_use]
-//! extern crate doc_comment;
-//!
-//! doctest!("../README.md");
-//! # fn main() {}
-//! ```
-//!
-//! Please also note that you can use `#[cfg(doctest)]`:
 //!
 //! ```no_run
 //! # #[macro_use]
@@ -109,13 +80,12 @@
 //!
 //!     // Of course, we need to import the `doc_comment` macro:
 //!     #[macro_use]
-//!     extern crate doc_comment;
-//!
-//!     macro_rules! gen_types {
-//!         ($tyname:ident) => {
-//!             doc_comment! {
-//!     concat!("This is a wonderful generated struct!
-//!
+//!     extern crate doc_comment;//
+// Doc comment
+//
+// Copyright (c) 2018 Guillaume Gomez
+//
+
 //!     You can use it as follow:
 //!
 //!     ```
@@ -197,32 +167,5 @@ macro_rules! doctest {
     };
     ($x:expr, $y:ident) => {
         doc_comment::doc_comment!(include_str!($x), mod $y {});
-    };
-}
-
-/// This macro provides a simpler way to test an outer markdown file.
-///
-/// # Example
-///
-/// ```
-/// #[macro_use]
-/// extern crate doc_comment;
-///
-/// // The two next lines are doing exactly the same thing:
-/// doc_comment!(include_str!("../README.md"));
-/// doctest!("../README.md");
-///
-/// // If you want to have a name for your tests:
-/// doctest!("../README.md", another);
-/// # fn main() {}
-/// ```
-#[cfg(feature = "old_macros")]
-#[macro_export]
-macro_rules! doctest {
-    ($x:expr) => {
-        doc_comment!(include_str!($x));
-    };
-    ($x:expr, $y:ident) => {
-        doc_comment!(include_str!($x), mod $y {});
     };
 }

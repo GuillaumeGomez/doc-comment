@@ -116,6 +116,13 @@
 //!
 //! Now each struct has doc which match itself!
 
+#[macro_export]
+macro_rules! crate_level_doc_comment {
+    ($x:expr) => {
+        #![doc = $x]
+    };
+}
+
 /// This macro can be used to generate documentation upon a type/item (or just to test outer
 /// markdown file code examples).
 ///

@@ -10,6 +10,14 @@
 
 Write doc comments from macros.
 
+Please note that calling macros in `doc` attribute was added in Rust 1.54 so unless you
+need to support older Rust versions, you don't need this crate and you can do the same
+thing with:
+
+```rust,no_run
+#[cfg_attr(doctest, doc = include_str!("../README.md"))]
+```
+
 ## Usage example
 
 ````rust

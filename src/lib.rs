@@ -11,6 +11,13 @@
 //! The point of this (small) crate is to allow you to add doc comments from macros or
 //! to test external markdown files' code blocks through `rustdoc`.
 //!
+//! Starting in Rust 1.54, this crate becomes useless as you can do the same thing
+//! with the `doc` attribute:
+//!
+//! ```ignore
+//! #[cfg_attr(doctest, doc = include_str!("../README.md"))]
+//! ```
+//!
 //! ## Including file(s) for testing
 //!
 //! Let's assume you want to test code examples in your `README.md` file which
